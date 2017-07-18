@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>false</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_0999_sharehandle_share_price</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>any notifications</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+	
+	//find notifications der skal afklares
+	// Notify increase
+	
+	var gru = new GlideRecord("x_0999_sharehandle_notifiacation");
+	gru.addQuery("share_code", current.code);
+	gru.addQuery("direction", "UP");
+	gru.addQuery("price","<=", current.price);
+	gru.addQuery("state",true);
+	gru.query();
+	while (gru.next()) {
+		
+		//gs.info(gr.user + ' ' + current.code + ' ' + current.price);
+		notifyFunction(current.price, gru.user,current.code);
+		// set state false
+		//************************* gru.state=false;
+		gru.update();
+	}
+	
+	//*********************
+	// Reactivate increase notification (drop by trigger)
+	var gru2 = new GlideRecord("x_0999_sharehandle_notifiacation");
+	gru2.addQuery("share_code", current.code);
+	gru2.addQuery("direction", "UP");
+	gru2.addQuery("price",">=", current.price);
+	gru2.addQuery("state","=", false);
+	gru2.query();
+	while (gru2.next()) {
+		
+		//gs.info(gr.user + ' ' + current.code + ' ' + current.price);
+		// set state true
+		// ********************** gru2.state=true;
+		gru2.update();
+	}
+	//*********************
+	// Notify decrease
+	
+	var grd = new GlideRecord("x_0999_sharehandle_notifiacation");
+	grd.addQuery("share_code", current.code);
+	grd.addQuery("direction", "DOWN");
+	grd.addQuery("price",">=", current.price);
+	grd.addQuery("state",true);
+	grd.query();
+	while (grd.next()) {
+		
+		gs.info(grd.user + ' ' + current.code + ' ' + current.price);
+		notifyFunction(current.price, grd.user,current.code);
+		// set state false
+//************************* 		grd.state=false;
+		grd.update();
+	}
+	
+	//*********************
+	// Reactivate decrease notification (drop by trigger)
+	var grd2 = new GlideRecord("x_0999_sharehandle_notifiacation");
+	grd2.addQuery("share_code", current.code);
+	grd2.addQuery("direction", "DOWN");
+	grd2.addQuery("price",">=", current.price);
+	grd2.addQuery("state","=", false);
+	grd2.query();
+	while (grd2.next()) {
+		
+		//gs.info(gr.user + ' ' + current.code + ' ' + current.price);
+		// set state true
+		// **********************  grd2.state=true;
+		grd2.update();
+	}
+	
+})(current, previous);
+
+
+function notifyFunction(price,user,share){
+	
+	var gr = new GlideRecord("x_0999_sharehandle_notify");
+	// 107.30,"ServiceNow, Inc.",N/A,N/A
+	gs.info(price + ' ' + user.name + ' ' + share);
+	gr.initialize();
+	
+	gr.price = price ;
+	gr.user = user ;
+	gr.share = share;
+	
+	gr.insert();
+	updateLastNotify(price,share,user);
+	
+	
+	
+	
+}
+
+function updateLastNotify(p,s,u){
+	gs.info("updateLastNotify ");
+	
+	var gr = new GlideRecord("x_0999_sharehandle_last_notify");
+	gr.addQuery("user", u);
+	gr.addQuery("share", s);
+	gr.query();
+	gs.info('antal rækker ' + gr.getRowCount());
+	if (gr.next()) {
+		// price update excist
+		gr.price = p ;
+		//	gr.user = user ;
+		//gr.share = share;
+		gr.update();
+		gs.info("updateLastNotify  update ");
+		
+	}else{
+		
+		try{
+			
+			
+			
+			gs.info("updateLastNotify  insert start");
+			// price update don't excist
+			
+			var grnew = new GlideRecord('x_0999_sharehandle_last_notify');
+			grnew.initialize();
+			grnew.price = p ;
+			grnew.user = u ;
+			grnew.share = s;
+			grnew.insert();
+			gs.info("updateLastNotify  new last notify inserted");
+		}
+		
+		
+		
+
+	catch(err){
+		gs.info("A runtime error occured: " + err);
+	}
+			}
+	/*
+	x_0999_sharehandle_last_notify
+	price
+	share
+	user
+ 	*/
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>lbl</sys_created_by>
+        <sys_created_on>2017-06-04 18:14:56</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>03aa91db0fc33200fee3943be1050e35</sys_id>
+        <sys_mod_count>21</sys_mod_count>
+        <sys_name>any notifications</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ShareHandle" source="x_0999_sharehandle">b454c15f0f833200fee3943be1050e39</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="ShareHandle">b454c15f0f833200fee3943be1050e39</sys_scope>
+        <sys_update_name>sys_script_03aa91db0fc33200fee3943be1050e35</sys_update_name>
+        <sys_updated_by>lbl</sys_updated_by>
+        <sys_updated_on>2017-06-20 22:17:07</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=03aa91db0fc33200fee3943be1050e35"/>
+</record_update>

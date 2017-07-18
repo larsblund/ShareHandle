@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="Share Notification">2f65419f0f833200fee3943be1050e69</application>
+        <assessment/>
+        <content_page/>
+        <device_type/>
+        <filter/>
+        <hint/>
+        <homepage/>
+        <image/>
+        <link_type>LIST</link_type>
+        <map_page/>
+        <mobile_title>share prices</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name>x_0999_sharehandle_share_price</name>
+        <order/>
+        <override_menu_roles>false</override_menu_roles>
+        <query/>
+        <report/>
+        <roles>x_0999_sharehandle.share_price_user</roles>
+        <survey/>
+        <survey_overwrite>true</survey_overwrite>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>lbl</sys_created_by>
+        <sys_created_on>2017-06-04 16:37:38</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>1f16c99f0f833200fee3943be1050e32</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>share prices</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ShareHandle" source="x_0999_sharehandle">b454c15f0f833200fee3943be1050e39</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="ShareHandle">b454c15f0f833200fee3943be1050e39</sys_scope>
+        <sys_update_name>sys_app_module_1f16c99f0f833200fee3943be1050e32</sys_update_name>
+        <sys_updated_by>lbl</sys_updated_by>
+        <sys_updated_on>2017-06-20 21:37:51</sys_updated_on>
+        <timeline_page/>
+        <title>share prices</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+</record_update>

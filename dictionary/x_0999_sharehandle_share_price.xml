@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="share price" max_length="40" name="x_0999_sharehandle_share_price" type="collection">
+        <element label="code" max_length="40" name="code" type="string"/>
+        <element label="price" max_length="40" name="price" type="string"/>
+        <element label="share" max_length="40" name="share" type="string"/>
+        <element label="time" max_length="40" name="time" type="glide_date_time"/>
+    </element>
+</database>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>false</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_0999_sharehandle_share_price</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>Notification change price</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
+	
+	// Add your code here
+	
+	// x_0999_sharehandle_notify
+	
+	
+	
+	/*
+	-Aktie indsat, er der nogen som abonnerer på den
+	- aktuel kurs i forhold til seneste notification (forskel mere end 0,5%)
+	- notificer user
+	- noter at der er notificeret til den angivne kurs
+	
+ 	*/
+	
+	try{
+		var gru = new GlideRecord("x_0999_sharehandle_notifiacation");
+		gru.addQuery("share_code", current.code);
+		gru.addQuery("state",true);
+		gru.query();
+		while (gru.next()) {
+			
+			//	gs.info(gru.user + ' ' + current.code + ' ' + current.price);
+			if ( findPriceLast(current.code,gru.user, current.price )){
+				gs.info('big change ' + current.code + ', ' + gru.user + ' '+ current.price ) ;
+				 
+				notifyFunctionCP(current.price,gru.user,current.code);
+				//************
+				// notify user
+				// ***********
+			} else{
+				gs.info('small change ' + current.code + ', ' + gru.user + ' '+ current.price );
+			}
+		}
+		
+	}
+	catch (err){
+		gs.info("A runtime error occured: " + err);
+	}
+	
+	/*
+	#2:
+	Lav en table hvor brugeren kan tilvælge info ved kurs ændring
+	
+	#3:
+	Lav et handels link i notificationen
+	Lav et get info on company i link
+	
+ 	*/
+	
+	/*
+	var gru = new GlideRecord("x_0999_sharehandle_notifiacation");
+	gru.addQuery("share_code", current.code);
+	gru.addQuery("direction", "UP");
+	gru.addQuery("price","<=", current.price);
+	gru.addQuery("state",true);
+	gru.query();
+	while (gru.next()) {
+		
+		//gs.info(gr.user + ' ' + current.code + ' ' + current.price);
+		notifyFunction(current.price, gru.user,current.code);
+		// set state false
+		gru.state=false;
+		gru.update();
+	}
+ 	*/
+	
+})(current, previous);
+
+
+//******************************
+// Should move to script include
+//******************************
+
+function findPriceLast(code, user, currentPrice){
+	try{
+		
+		var price ="";
+		var gr = new GlideRecord("x_0999_sharehandle_last_notify");
+		gr.addQuery("share", code);
+		gr.addQuery("user", user);
+		gr.query();
+		if (gr.hasNext()){
+			
+			if (gr.next()) {
+				var x = (((currentPrice - gr.price)*100)/currentPrice);
+				x = Math.sqrt(x*x);
+				// price change +/- 0,25%
+				if(x>0.25){
+					return true;
+				}else{
+					return false;
+				}
+			}
+		}else{
+			return false;
+		}
+	}
+	catch (err){
+		gs.info("A runtime error occured: " + err);
+	}
+}
+
+
+
+function notifyFunctionCP(price,user,share){
+	
+	var gr = new GlideRecord("x_0999_sharehandle_notify");
+	// 107.30,"ServiceNow, Inc.",N/A,N/A
+	gs.info(price + ' ' + user.name + ' ' + share);
+	gr.initialize();
+	
+	gr.price = price ;
+	gr.user = user ;
+	gr.share = share;
+	
+	gr.insert();
+	updateLastNotifyCP(price,share,user);
+}
+
+
+function updateLastNotifyCP(p,s,u){
+	gs.info("updateLastNotify ");
+	
+	var gr = new GlideRecord("x_0999_sharehandle_last_notify");
+	gr.addQuery("user", u);
+	gr.addQuery("share", s);
+	gr.query();
+	gs.info('antal rækker ' + gr.getRowCount());
+	if (gr.next()) {
+		// price update excist
+		gr.price = p ;
+		//	gr.user = user ;
+		//gr.share = share;
+		gr.update();
+		gs.info("updateLastNotify  update ");
+		
+	}else{
+		
+		try{			
+			gs.info("updateLastNotify  insert start");
+			// price update don't excist
+			
+			var grnew = new GlideRecord('x_0999_sharehandle_last_notify');
+			grnew.initialize();
+			grnew.price = p ;
+			grnew.user = u ;
+			grnew.share = s;
+			grnew.insert();
+			gs.info("updateLastNotify  new last notify inserted");
+		}
+		
+		catch(err){
+			gs.info("A runtime error occured: " + err);
+		}
+	}
+	
+}
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>lbl</sys_created_by>
+        <sys_created_on>2017-06-18 01:31:32</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>41dcf16b0f133200fee3943be1050eef</sys_id>
+        <sys_mod_count>32</sys_mod_count>
+        <sys_name>Notification change price</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ShareHandle" source="x_0999_sharehandle">b454c15f0f833200fee3943be1050e39</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="ShareHandle">b454c15f0f833200fee3943be1050e39</sys_scope>
+        <sys_update_name>sys_script_41dcf16b0f133200fee3943be1050eef</sys_update_name>
+        <sys_updated_by>lbl</sys_updated_by>
+        <sys_updated_on>2017-06-25 21:07:23</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=41dcf16b0f133200fee3943be1050eef"/>
+</record_update>

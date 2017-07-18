@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sysauto_script">
+    <sysauto_script action="INSERT_OR_UPDATE">
+        <active>false</active>
+        <condition/>
+        <conditional>false</conditional>
+        <name>get price</name>
+        <run_as display_value="lars lund">e04a80920fab4600fee3943be1050e41</run_as>
+        <run_as_tz/>
+        <run_dayofmonth>1</run_dayofmonth>
+        <run_dayofweek>1</run_dayofweek>
+        <run_period>1970-01-01 00:10:00</run_period>
+        <run_start>2017-06-04 16:55:47</run_start>
+        <run_time>1969-12-31 23:00:00</run_time>
+        <run_type>periodically</run_type>
+        <script><![CDATA[var gdt = new GlideDateTime();
+var gt = gdt.getTime().getHourOfDayUTC();
+
+if(gdt.getDayOfWeekLocalTime()<6 || 1==1 ){ 
+	//|| 1==1
+	if (gt<22 && gt>8  || 1==1){ //|| 1==1
+		gs.info("get price running");
+		getReqPrice();
+	}
+}
+
+function getReqPrice(){
+	
+	//getPrice for each request
+	var gr = new GlideRecord("x_0999_sharehandle_notifiacation");
+	var codes ="";
+	var x =0;
+	
+	gr.query();
+	while (gr.next()) {
+		x++;
+		var c = gr.share_code;
+		codes +=c + ',';
+
+	}
+	var codess = codes.split(',');
+	codess = sortUnique(codess);
+	
+	x=0;
+	while (x<(codess.length -1)){
+		gs.info('code w:'+ codess[x+1] + ' x:'+x);
+		getPrice(codess[x+1]);
+		x++;
+//		gs.info('x w:'+x);
+	}
+}
+
+
+
+// since ArrayUtil don't work in applications
+function sortUnique(arr) {
+	arr.sort();
+	var last_i;
+	for (var i=0;i<arr.length;i++)
+		if ((last_i = arr.lastIndexOf(arr[i])) !== i)
+		arr.splice(i+1, last_i-i);
+	return arr;
+}
+
+
+//******************************
+// Should move to script include
+//******************************
+
+
+function getPrice(code){
+	
+	try {
+		var r = new sn_ws.RESTMessageV2('x_0999_sharehandle.yahoo rest finance', 'Default GET');
+		//var code ='NOW';
+		r.setStringParameterNoEscape('symbol', code);
+		
+		var response = r.execute();
+		var responseBody = response.getBody();
+		var httpStatus = response.getStatusCode();
+		
+		saveprice(responseBody, code);
+		//	gs.info("sharehandler: " +responseBody);
+	}
+	catch(ex) {
+		var message = ex.getMessage();
+	}
+}
+
+function saveprice(response,code){
+	gs.info("saveprice:" + response + " " + code );
+	var gr = new GlideRecord("x_0999_sharehandle_share_price");
+	// 107.30,"ServiceNow, Inc.",N/A,N/A
+	var respArr= response.split(",");
+	//	gs.info(respArr.length);
+	if (respArr.length ==5){
+		
+		respArr[1] = respArr[1] + respArr[2];
+		respArr[2] = respArr[3];
+		respArr[3] = respArr[4];
+		
+	}
+	gr.initialize();
+	
+	gr.price = respArr[0];//response;
+	gr.code = code ;
+	gr.share = respArr[1].replace('"','').replace('"','');
+	//	gr.share = respArr[1];
+	gr.time = '';
+	gr.insert();
+	
+}
+
+
+]]></script>
+        <sys_class_name>sysauto_script</sys_class_name>
+        <sys_created_by>lbl</sys_created_by>
+        <sys_created_on>2017-06-04 16:56:28</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>0d4a09530fc33200fee3943be1050ec4</sys_id>
+        <sys_mod_count>83</sys_mod_count>
+        <sys_name>get price</sys_name>
+        <sys_package display_value="ShareHandle" source="x_0999_sharehandle">b454c15f0f833200fee3943be1050e39</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="ShareHandle">b454c15f0f833200fee3943be1050e39</sys_scope>
+        <sys_update_name>sysauto_script_0d4a09530fc33200fee3943be1050ec4</sys_update_name>
+        <sys_updated_by>lbl</sys_updated_by>
+        <sys_updated_on>2017-07-09 21:54:15</sys_updated_on>
+        <upgrade_safe>false</upgrade_safe>
+    </sysauto_script>
+</record_update>
