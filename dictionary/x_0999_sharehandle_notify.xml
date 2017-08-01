@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
     <element label="Notify" max_length="40" name="x_0999_sharehandle_notify" type="collection">
+        <element label="Notes" max_length="2000" name="notes" type="string"/>
         <element label="Price" max_length="40" name="price" type="string"/>
         <element label="Share" max_length="40" name="share" type="string"/>
         <element label="Status" max_length="40" name="status" type="string"/>
-        <element label="timestamp" max_length="40" name="timestamp" type="glide_date_time"/>
         <element label="User" max_length="32" name="user" reference="sys_user" type="reference"/>
         <index name="index">
             <element name="user"/>

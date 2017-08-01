@@ -113,6 +113,20 @@
             <sys_user/>
             <type/>
         </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>notes</element>
+            <position>8</position>
+            <sys_created_by>lbl</sys_created_by>
+            <sys_created_on>2017-07-31 15:59:32</sys_created_on>
+            <sys_id>3c00ae650f900300fee3943be1050e52</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_0999_sharehandle_notify" sys_domain="global" view="Default view">e08dd91f0fc33200fee3943be1050ed6</sys_ui_section>
+            <sys_updated_by>lbl</sys_updated_by>
+            <sys_updated_on>2017-07-31 15:59:32</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
         <sys_ui_section action="INSERT_OR_UPDATE">
             <caption/>
             <header>false</header>

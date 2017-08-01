@@ -14,7 +14,7 @@
         <client_callable>false</client_callable>
         <collection>x_0999_sharehandle_notify</collection>
         <condition/>
-        <description/>
+        <description>test</description>
         <execute_function>false</execute_function>
         <filter_condition/>
         <is_rest>false</is_rest>
@@ -35,7 +35,7 @@
 	//******************************
 	try {
 		var r = new sn_ws.RESTMessageV2('x_0999_sharehandle.send share push message', 'Post');
-		var resp = current.share + ' ' + current.price + '  ' + current.sys_updated_on ;
+		var resp = current.share + ' ' + current.price + ' ' + current.notes + ' ' + current.sys_updated_on ;
 		//	gs.info("push message: " + resp);
 		r.setStringParameter('content', resp.toString());
 		
@@ -68,7 +68,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>37c929170f073200fee3943be1050ef8</sys_id>
-        <sys_mod_count>14</sys_mod_count>
+        <sys_mod_count>16</sys_mod_count>
         <sys_name>push notification</sys_name>
         <sys_overrides/>
         <sys_package display_value="ShareHandle" source="x_0999_sharehandle">b454c15f0f833200fee3943be1050e39</sys_package>
@@ -77,7 +77,7 @@
         <sys_scope display_value="ShareHandle">b454c15f0f833200fee3943be1050e39</sys_scope>
         <sys_update_name>sys_script_37c929170f073200fee3943be1050ef8</sys_update_name>
         <sys_updated_by>lbl</sys_updated_by>
-        <sys_updated_on>2017-06-21 21:29:56</sys_updated_on>
+        <sys_updated_on>2017-07-31 16:00:45</sys_updated_on>
         <template/>
         <when>async</when>
     </sys_script>

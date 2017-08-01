@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update>
-    <sys_documentation element="timestamp" label="Timestamp" language="en" table="x_0999_sharehandle_notify">
+    <sys_documentation element="notes" label="Notes" language="en" table="x_0999_sharehandle_notify">
         <sys_documentation action="INSERT_OR_UPDATE">
-            <element>timestamp</element>
+            <element>notes</element>
             <help/>
             <hint/>
-            <label>Timestamp</label>
+            <label>Notes</label>
             <language>en</language>
             <name>x_0999_sharehandle_notify</name>
-            <plural>Timestamps</plural>
+            <plural>Notes</plural>
             <sys_class_name>sys_documentation</sys_class_name>
             <sys_created_by>lbl</sys_created_by>
-            <sys_created_on>2017-06-04 16:36:23</sys_created_on>
+            <sys_created_on>2017-07-31 15:59:32</sys_created_on>
             <sys_customer_update>true</sys_customer_update>
-            <sys_id>f4d5859f0f833200fee3943be1050eb4</sys_id>
+            <sys_id>3000ae650f900300fee3943be1050e7f</sys_id>
             <sys_mod_count>0</sys_mod_count>
-            <sys_name>Timestamp</sys_name>
+            <sys_name>Notes</sys_name>
             <sys_package display_value="ShareHandle" source="x_0999_sharehandle">b454c15f0f833200fee3943be1050e39</sys_package>
             <sys_policy/>
             <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
             <sys_scope display_value="ShareHandle">b454c15f0f833200fee3943be1050e39</sys_scope>
-            <sys_update_name>sys_documentation_x_0999_sharehandle_notify_timestamp_en</sys_update_name>
+            <sys_update_name>sys_documentation_x_0999_sharehandle_notify_notes_en</sys_update_name>
             <sys_updated_by>lbl</sys_updated_by>
-            <sys_updated_on>2017-06-04 16:36:23</sys_updated_on>
+            <sys_updated_on>2017-07-31 15:59:32</sys_updated_on>
             <url/>
             <url_target/>
         </sys_documentation>

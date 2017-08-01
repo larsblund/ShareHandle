@@ -14,7 +14,7 @@
         <client_callable>false</client_callable>
         <collection>x_0999_sharehandle_share_price</collection>
         <condition/>
-        <description/>
+        <description>notify when a price you are interested in changes.</description>
         <execute_function>false</execute_function>
         <filter_condition/>
         <is_rest>false</is_rest>
@@ -30,10 +30,7 @@
         <role_conditions/>
         <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
 	
-	// Add your code here
-	
 	// x_0999_sharehandle_notify
-	
 	
 	
 	/*
@@ -52,15 +49,38 @@
 		while (gru.next()) {
 			
 			//	gs.info(gru.user + ' ' + current.code + ' ' + current.price);
-			if ( findPriceLast(current.code,gru.user, current.price )){
-				gs.info('big change ' + current.code + ', ' + gru.user + ' '+ current.price ) ;
-				 
-				notifyFunctionCP(current.price,gru.user,current.code);
-				//************
-				// notify user
-				// ***********
+			var shouldBeInformed = findPriceLast(current.code,gru.user, current.price);
+			if (shouldBeInformed =="bu" ||shouldBeInformed =="bd" ){
+				
+				if(shouldBeInformed =="bu"){
+				//	gs.info('big change ' + current.code + ', ' + gru.user + ' '+ current.price ) ;
+					
+					notifyFunctionCP(current.price,gru.user,current.code,"Price change Going up "  );
+					//************
+					// notify user
+					// ***********
+				}else{
+				//	gs.info('big change ' + current.code + ', ' + gru.user + ' '+ current.price ) ;
+					
+					notifyFunctionCP(current.price,gru.user,current.code,"Price change Going down" );
+					//************
+					// notify user
+					// ***********
+				}
+				
 			} else{
-				gs.info('small change ' + current.code + ', ' + gru.user + ' '+ current.price );
+				// if tthe user never has been notified
+				if(shouldBeInformed =="n"){
+				//	gs.info('first notify ' + current.code + ', ' + gru.user + ' '+ current.price );
+					
+					notifyFunctionCP(current.price,gru.user,current.code,"First notify");
+					//************
+					// notify user, first time
+					// ***********
+				}else{
+				//	gs.info('small change ' + current.code + ', ' + gru.user + ' '+ current.price );
+				}
+				
 			}
 		}
 		
@@ -118,13 +138,19 @@ function findPriceLast(code, user, currentPrice){
 				x = Math.sqrt(x*x);
 				// price change +/- 0,25%
 				if(x>0.25){
-					return true;
+					
+					if (currentPrice >= gr.price){
+						return "bu";//big up
+					}else{
+						return "bd";//big down
+					}
+					
 				}else{
-					return false;
+					return "s"; //small
 				}
 			}
 		}else{
-			return false;
+			return "n";//new
 		}
 	}
 	catch (err){
@@ -134,7 +160,7 @@ function findPriceLast(code, user, currentPrice){
 
 
 
-function notifyFunctionCP(price,user,share){
+function notifyFunctionCP(price,user,share, notes){
 	
 	var gr = new GlideRecord("x_0999_sharehandle_notify");
 	// 107.30,"ServiceNow, Inc.",N/A,N/A
@@ -144,6 +170,7 @@ function notifyFunctionCP(price,user,share){
 	gr.price = price ;
 	gr.user = user ;
 	gr.share = share;
+	gr.notes = notes;
 	
 	gr.insert();
 	updateLastNotifyCP(price,share,user);
@@ -151,25 +178,25 @@ function notifyFunctionCP(price,user,share){
 
 
 function updateLastNotifyCP(p,s,u){
-	gs.info("updateLastNotify ");
+//	gs.info("updateLastNotify ");
 	
 	var gr = new GlideRecord("x_0999_sharehandle_last_notify");
 	gr.addQuery("user", u);
 	gr.addQuery("share", s);
 	gr.query();
-	gs.info('antal rækker ' + gr.getRowCount());
+//	gs.info('antal rækker ' + gr.getRowCount());
 	if (gr.next()) {
 		// price update excist
 		gr.price = p ;
 		//	gr.user = user ;
 		//gr.share = share;
 		gr.update();
-		gs.info("updateLastNotify  update ");
+//		gs.info("updateLastNotify  update ");
 		
 	}else{
 		
-		try{			
-			gs.info("updateLastNotify  insert start");
+		try{
+//			gs.info("updateLastNotify  insert start");
 			// price update don't excist
 			
 			var grnew = new GlideRecord('x_0999_sharehandle_last_notify');
@@ -178,7 +205,7 @@ function updateLastNotifyCP(p,s,u){
 			grnew.user = u ;
 			grnew.share = s;
 			grnew.insert();
-			gs.info("updateLastNotify  new last notify inserted");
+//			gs.info("updateLastNotify  new last notify inserted");
 		}
 		
 		catch(err){
@@ -187,7 +214,7 @@ function updateLastNotifyCP(p,s,u){
 	}
 	
 }
-	
+
 
 
 
@@ -227,7 +254,7 @@ function updateLastNotifyCP(p,s,u){
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>41dcf16b0f133200fee3943be1050eef</sys_id>
-        <sys_mod_count>32</sys_mod_count>
+        <sys_mod_count>46</sys_mod_count>
         <sys_name>Notification change price</sys_name>
         <sys_overrides/>
         <sys_package display_value="ShareHandle" source="x_0999_sharehandle">b454c15f0f833200fee3943be1050e39</sys_package>
@@ -236,7 +263,7 @@ function updateLastNotifyCP(p,s,u){
         <sys_scope display_value="ShareHandle">b454c15f0f833200fee3943be1050e39</sys_scope>
         <sys_update_name>sys_script_41dcf16b0f133200fee3943be1050eef</sys_update_name>
         <sys_updated_by>lbl</sys_updated_by>
-        <sys_updated_on>2017-06-25 21:07:23</sys_updated_on>
+        <sys_updated_on>2017-08-01 15:24:59</sys_updated_on>
         <template/>
         <when>before</when>
     </sys_script>
